@@ -1,0 +1,41 @@
+## 什么是长缓存，如何做长缓存优化
+
+浏览器在访问页面的时候 会进行静态资源的存储。
+
+但是每次代码更新 则需要去下载新代码
+
+最方便和简单的更新方式是引入新的文件名称。这样不会去读之前的缓存了。
+
+处理方案：
+
+1 output 中的chunkhash
+
+2 分离经常更新的代码和框架代码 【 namedModulesPulgin 】是再次打包的文件不变
+
+## tree-shaking
+
+WP打包的时候会有注释 表明代码不执行
+
+还有uglifyJSPlugin
+
+但是css的是通过 purify-css
+
+* 常规优化
+
+* 引入第三方库 【bootstrap 的一点点 】
+
+W3 会将用不到的代码标注出来
+
+
+### js 的 tree-shaking
+
+#### 有的第三方库不能使用 tree-shaking
+
+tree-shaking 使用前提是 交给wp的必须使用的是ES6语法 而大部分第三方库使用的是common.js 规范
+
+导致tree-shaking降级无法处理
+
+【如果有的库在发布到npm的时候使用的是两份代码 可以通过配置mainFields来配置入口描述】
+
+
+看一下redux

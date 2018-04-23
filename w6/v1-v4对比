@@ -1,0 +1,7 @@
+## v4  代码分割
+
+###  抽离公共插件 c  公共库 react redux
+
+* v3  commonchunks
+
+* v4  optimization

@@ -1,0 +1,19 @@
+{
+  "name": "w4",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --config webpack.config.js --json > start.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "web-webpack-plugin": "^1.10.2"
+  },
+  "dependencies": {
+    "react": "^16.2.0"
+  }
+}

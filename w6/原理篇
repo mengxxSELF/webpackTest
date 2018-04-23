@@ -1,0 +1,213 @@
+## 实现一个 require 方法
+
+```
+let fs = require('fs')
+// 查找module
+function myReq (myModule) {
+  // 读取文件信息
+  let cont = fs.readFileSync(myModule, 'utf-8')
+  let nodeFn = new Function('exports', 'require', 'module', '__filename', '__dirname', cont + 'return module.exports')
+  let module = {
+    exports: {}
+  }
+  return nodeFn(module.exports, myReq, module, __filename, __dirname)
+}
+let getA = myReq('./a.js')
+console.log(getA, 'getA')
+```
+
+## 使用W3 打包
+
+分析生成的dist/index.js 的代码
+
+![W3-index1](https://user-gold-cdn.xitu.io/2018/4/21/162e6658ed0b14f3?w=2202&h=968&f=png&s=192497)
+
+像我们之前写的common函数
+
+![common](https://user-gold-cdn.xitu.io/2018/4/21/162e669d99de45cf?w=1936&h=884&f=png&s=184204)
+
+* 如果有文件依赖
+
+去看 index_rely.js
+
+
+-- 大体的认识 -
+
+
+## wp 打包流程 - 解析webpack黑盒
+
+-- 开始讲解原理 --
+
+### 名词解释
+
+
+### 流程概括
+
+wp从启动到结束会一次执行以下流程
+
+* 参数初始化
+
+从配置文件 【webpack.config.js】和 shell 语句中读取与合并参数
+
+* 开始编译
+
+创建一个compiler对象 加载所有插件 执行run方法开始编译
+
+* 确定入口文件
+
+根据配置文件找到项目所有的入口文件
+
+* 编译模块
+
+从入口开始 调用配置的loader对模块进行编译 【有一个递归寻找依赖模块的流程】
+
+模块编译完成后 得到模块被转化后的最后内容以及他们之间的依赖关系
+
+* 资源输出
+
+根据入口文件和模块之间的依赖关系 组成chunk文件 【一个chunk可能包含多个模块】每一个chunk将会被转化
+成一个单独的文件加入输出列表中
+
+* 输出
+
+根据配置的输出参数 【路径和文件名】将文件内容写入文件系统
+
+在以上的过程 WP会在特定的时间点广播特定的事件 插件在监听到感兴趣的事件后会
+执行特定的逻辑
+
+
+### 构建流程三个阶段
+
+初始化 -》 编译 -》 输出
+
+
+初始化阶段： 启动构建 读取与合并参数 加载plugin 实例化complier
+
+编译阶段： 从entry出发 针对每一个module 调用loader出翻译文件内容
+
+在找到其依赖 递归的进行编译处理
+
+输出： 将编译后的module组合成chunk 将chunk转换成文件 输出到文件系统中
+
+
+### 根据打包出的bundle.js 分析打包原理
+
+其实是一个立即执行函数 可以简写为
+
+```
+(function (modules) {
+    // 可以在浏览器中运行的类似require函数
+    function wp_require(){}
+
+    // 执行参数数组中的入口模块
+    wp_require(0)
+
+})([/* 所有模块数组 */])
+```
+
+
+bundle.js 能直接在浏览器运行的原因是, 在输出文件中通过 _webpack_require_ 函数 定义了一个可以
+在浏览器执行的 wp_require 函数  来模拟node中的require语句
+
+#### 看一下如果项目中使用了代码分割 [使用commonChunkPlugin或者异步加载模块] 之后的bundle.js是什么样子
+
+window 中多了一个 webpackJsonp 函数 用于从异步加载的文件中加载模块
+
+
+## plugin
+
+查看代码目录
+
+node_modules/webpack/lib/Compiler.js/191 - 202
+
+
+webpack 插件是一个具有 apply 属性的 JavaScript 对象。
+
+apply 属性会被 webpack compiler 调用，并且 compiler 对象可在整个编译生命周期访问。
+
+一个最简单的plugin
+
+[simple-webpack/plugin.js]
+
+```
+class MPlugin {
+    // 这里获取用户为插件传入的配置参数
+    constructor (options) {
+
+    }
+    // webpack 会调用 MPlugin 实例的apply方法 为插件实例传入 compiler 对象
+    apply (compiler) {
+        compiler.plugin('compilation', function (compilation) {
+
+        })
+    }
+}
+
+module.exports = MPlugin;
+
+
+// 如何使用
+
+//  -- webpack.config.js --
+const MPlugin = require('./MPlugin.js')
+module.exports = {
+    plugins: [
+        new MPlugin({
+            chunks: ['a'],
+            // path
+        })
+    ]
+}
+
+
+```
+wp启动之后 在读取配置过程会先执行 new  MPlugin（options） 在初始化compiler 对象后
+
+调用 myplugin.apply(compiler) 为插件实例传入compiler对象。当实例获得compiler对象之后
+
+可以通过compiler.plugin（事件名称，回调函数）监听到wp广播的事件  并且通过compiler对象去操作wp
+
+### 两个对象：  compiler 和 compilation
+
+他们是plugin和wp的沟通的桥梁
+
+* compiler 包含wp的配置信息 【options loaders plugins等】
+
+他在wp启动的时候实例化 是唯一的 【可以看做wp实例】
+
+```
+const compiler = new Webpack(options)
+```
+
+* compilation
+
+包含当前模块资源 编译生成资源 变化的文件等
+
+当wp检测到文件变化 就会有一个新的compilation对象 被创建
+
+** 区别 **
+
+compiler 代表整个WP从启动到关闭的生命周期
+
+compilation 只代表一次新的编译
+
+
+## 事件流
+
+[tapable](https://github.com/webpack/tapable)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###

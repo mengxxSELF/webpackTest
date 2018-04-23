@@ -1,0 +1,5 @@
+[tapable](https://github.com/webpack/tapable)
+
+wp 的事件流机制应用了观察者模式 类似于node中的 eventEmitter
+
+compiler 和 compilation 继承自 tapable。可以直接在compiler和compilation对象上广播和监听事件

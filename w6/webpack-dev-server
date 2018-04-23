@@ -1,0 +1,12 @@
+webpack-dev-server
+
+在内存中存储了打包文件 可以使用模块热更新
+
+相当于 express + hot-middlewear 加一些配置等
+
+
+模块热更新定义： 可以看做高级版本的浏览器刷新
+
+原理； WebSocket  module.hot
+
+通过websocket 推送消息

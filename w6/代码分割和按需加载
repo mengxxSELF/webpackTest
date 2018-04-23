@@ -1,0 +1,55 @@
+## 代码分割
+
+分离业务代码和第三方依赖
+
+分离首次加载 和 访问后加载的代码
+
+
+一个规范的项目应该有如下三部分chunk
+
+* 项目使用的技术栈  - base.js
+
+* 剔除技术栈之后的  所有页面都依赖的公共代码 -- common.js
+
+* 每一个网页各自独立的代码
+
+### 为什么要有common.js 和 base.js 区分
+
+为了长期缓存 base.js 只要不升级基础库版本 则保持base中文件不发生变化
+
+### commonChunkPlugin
+
+* 提供基础库
+
+
+
+* 提取 index 和 main 的公共组件
+
+webpack2__division/public/division_1
+
+
+
+## 按需加载
+
+并不是通过plugin来做的 而是通过代码书写规范
+
+## require.ensure
+
+```
+
+
+```
+
+## require.include
+
+将公共模块写到父级模块中
+
+## 动态加载
+
+```
+import(
+  /* webpackChunkName: youname */
+  modulename
+).then()
+
+```
