@@ -16,7 +16,7 @@
 
 WP打包的时候会有注释 表明代码不执行
 
-还有uglifyJSPlugin
+还有  uglifyJSPlugin
 
 但是css的是通过 purify-css
 

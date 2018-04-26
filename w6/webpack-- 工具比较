@@ -3,3 +3,28 @@ grunt gulp 属于执行任务
 webpack 是模块打包 -- 可以递归的查找文件依赖并且进行打包
 
 支持代码分割
+
+
+## parcel
+
+[parcel](http://www.css88.com/doc/parcel/)
+
+[默认必须 node > 8]
+
+
+#### version
+
+v2
+
+tree-shaking
+
+v3
+
+magic comments 【魔法注释】
+
+v4
+
+commomChunk -》 内置api  optimization.splitChunks
+
+
+它默认的入口为'./src/'和默认出口'./dist'，

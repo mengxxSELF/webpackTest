@@ -36,7 +36,9 @@ webpack2__division/public/division_1
 ## require.ensure
 
 ```
-
+require.ensure([dependencies], function () {
+  require('./a.js')
+}, chunkname)
 
 ```
 
