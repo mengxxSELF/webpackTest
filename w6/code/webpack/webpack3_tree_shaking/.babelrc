@@ -1,0 +1,6 @@
+{
+    "presets": [
+        ["env", {"modules": false}]
+    ]
+}
+// 关闭es6转化功能

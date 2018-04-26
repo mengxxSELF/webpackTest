@@ -1,5 +1,5 @@
-// import {name} from './utils'
-let name = require('./utils')
+import {name} from './utils'
+// let name = require('./utils')
 console.log('index', name)
 
 // import {concat} from 'lodash'
