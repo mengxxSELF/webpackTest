@@ -179,7 +179,8 @@ class Compiler extends Tapable {
 	constructor() {
 		super();
 
-		// 输入输出先关配置信息
+// step 3 ---- 输入输出相关配置信息 --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+		// 输入输出相关配置信息 
 
 		this.outputPath = "";
 		this.outputFileSystem = null;
@@ -198,9 +199,11 @@ class Compiler extends Tapable {
 			context: null
 		};
 
+// step 4 ---- parser --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
 		// parser 是一个 存放编译器信息的对象
 		this.parser = {
-			// plugin属性 事件响应
+			// plugin属性 
 			plugin: util.deprecate(
 				(hook, fn) => {
 					this.plugin("compilation", (compilation, data) => {
@@ -237,8 +240,10 @@ class Compiler extends Tapable {
 		return watching;
 	}
 
-	// step 1 -----------------------------------------------------------------------
-	// run -- 帮助webpack开始编译
+// step 5 ---- webpack开始编译 run（） --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
+	// go 1 -----------------------------------------------------------------------
+	// run -- webpack开始编译
 	run(callback) {
 		const startTime = Date.now();
 
@@ -253,7 +258,9 @@ class Compiler extends Tapable {
 				return callback(null, stats);
 			}
 
-			// 编译完毕 -- 准备输出所有资源
+// step 6 ---- 准备输出所有资源 --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
+			// 编译完毕 -- 准备输出所有资源 -- 点击 进入 emitAssets 方法
 			this.emitAssets(compilation, err => {
 				if(err) return callback(err);
 
@@ -323,12 +330,16 @@ class Compiler extends Tapable {
 			this.inputFileSystem.purge();
 	}
 
+// step 7 ---- emitAssets --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
 	// emitAssets 方法 输出所有的资源 
 	emitAssets(compilation, callback) {
 		let outputPath;
 
 		const emitFiles = (err) => {
 			if(err) return callback(err);
+
+// step 8 ---- 输出所有文件 --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
 
 			// 输出所有文件
 			require("async").forEach(Object.keys(compilation.assets), (file, callback) => {
@@ -469,7 +480,10 @@ class Compiler extends Tapable {
 		return !!this.parentCompilation;
 	}
 
-  // 创建 Compilation 对象【每一次新的构建发生 都会有一个 Compilation 对象 】
+// step 9 ---- Compilation --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
+	// 创建 Compilation 对象【每一次新的构建发生 都会有一个 Compilation 对象 】
+	// 点击查看  Compilation 类
 	createCompilation() {
 		return new Compilation(this);
 	}
@@ -511,7 +525,10 @@ class Compiler extends Tapable {
 		return params;
 	}
 
-	// step 2 --------------------------------------------------------------------------------------------
+
+// step 10 ---- compile --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
+	// go 2 --------------------------------------------------------------------------------------------
   // compile  编译
 	compile(callback) {
 		const params = this.newCompilationParams();
@@ -520,15 +537,18 @@ class Compiler extends Tapable {
 
 			this.applyPlugins("compile", params);
 
+// step 11 ---- 构建新的编译对象 --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
 			// 构建新的编译对象 
 			const compilation = this.newCompilation(params);
 
-			// 监听到 make 的广播 执行此方法 -- make 由 SingleEntryDependency 模块中发出
+			// applyPluginsParallel 同步调用  -- make 由 SingleEntryDependency 模块中发出
 			this.applyPluginsParallel("make", compilation, err => {
 				if(err) return callback(err);
 
 				compilation.finish();
 
+// step 12 ---- 构建新的编译对象 --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
 				//  这里编译完成 使用seal方法对每个Module和chunk进行整理 生成编译后的源码， 合并 拆分等  --------
 				// 具体实现请看  compilation.js 的 seal方法
 				compilation.seal(err => {

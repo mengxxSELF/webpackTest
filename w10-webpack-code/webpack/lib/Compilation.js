@@ -6,6 +6,7 @@
 
 const asyncLib = require("async");
 const crypto = require("crypto");
+// step 1 ---- tapable --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
 // 核心库 tapable
 const Tapable = require("tapable");
 
@@ -16,10 +17,14 @@ const ModuleDependencyError = require("./ModuleDependencyError");
 const Module = require("./Module");
 const Chunk = require("./Chunk");
 const Entrypoint = require("./Entrypoint");
+
+// step 2 ---- 引入chunk生成的模板 Template --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
 const MainTemplate = require("./MainTemplate");
 const ChunkTemplate = require("./ChunkTemplate");
 const HotUpdateChunkTemplate = require("./HotUpdateChunkTemplate");
 const ModuleTemplate = require("./ModuleTemplate");
+
 const Dependency = require("./Dependency");
 const ChunkRenderError = require("./ChunkRenderError");
 const AsyncDependencyToInitialChunkWarning = require("./AsyncDependencyToInitialChunkWarning");
@@ -49,6 +54,9 @@ function iterationOfArrayCallback(arr, fn) {
 	}
 }
 
+// step 3 ---- Compilation 继承自Tapable  --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
+
 class Compilation extends Tapable {
 	constructor(compiler) {
 		super();
@@ -62,6 +70,8 @@ class Compilation extends Tapable {
 		this.profile = options && options.profile;
 		this.performance = options && options.performance;
 
+// step 4 ---- 挂载模板  --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
 		// 最终 chunk 输出时候 使用的模板 【比如最开始写的那个 require 】
 
 		this.mainTemplate = new MainTemplate(this.outputOptions);
@@ -70,6 +80,8 @@ class Compilation extends Tapable {
 		this.moduleTemplate = new ModuleTemplate(this.outputOptions);
 
 		this.semaphore = new Semaphore(options.parallelism || 100);
+
+// step 5 ---- 配置的基本信息  --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
 
 		//  入口  chunks  modules 等等
 
@@ -145,7 +157,10 @@ class Compilation extends Tapable {
 		return this._modules[identifier];
 	}
 
+// step 6 ---- 模块构建  --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
 	//  模块构建 --
+	// 构建阶段实现 -- 调用loader处理源文件 生成ast 处理依赖
 	buildModule(module, optional, origin, dependencies, thisCallback) {
 		this.applyPlugins1("build-module", module);
 		if(module.building) return module.building.push(thisCallback);
@@ -210,6 +225,8 @@ class Compilation extends Tapable {
 		addDependenciesBlock(module);
 		this.addModuleDependencies(module, dependencies, this.bail, null, true, callback);
 	}
+
+// step 7 ---- addModuleDependencies 处理模块依赖  --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
 
 	addModuleDependencies(module, dependencies, bail, cacheGroup, recursive, callback) {
 		let _this = this;
@@ -385,8 +402,9 @@ class Compilation extends Tapable {
 	}
 
 
-	// _addModuleChain 用于寻找模块依赖关系 ---------
+// step 8 ---- 用于寻找模块依赖关系  --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
 
+	// _addModuleChain 用于寻找模块依赖关系 ---------
 	_addModuleChain(context, dependency, onModule, callback) {
 		const start = this.profile && Date.now();
 
@@ -491,7 +509,10 @@ class Compilation extends Tapable {
 		});
 	}
 
-	// step N -- make 事件中会使用 -> addEntry  ------------------------------------------------------------------------------------------------------
+
+// step 9 ---- addEntry  查找入口文件 --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
+	// go N -- make 事件中会使用 -> addEntry  ------------------------------------------------------------------------------------------------------
 	// 查找入口文件 进行下一步模块绑定
 	addEntry(context, entry, name, callback) {
 		const slot = {
@@ -586,11 +607,14 @@ class Compilation extends Tapable {
 		this.modules.forEach(module => module.unseal());
 	}
 
-  // seal 方法 -- 用于整理Module和chunk 进行编译之后的 源码合并拆分等
+// step 10 ---- seal  进行编译之后的源码合并拆分等 --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
+  // seal 方法 -- 用于整理Module和chunk 进行编译之后的源码合并拆分等
 	seal(callback) {
 		this.applyPlugins0("seal");
 		this.nextFreeModuleIndex = 0;
 		this.nextFreeModuleIndex2 = 0;
+		// 遍历 -- 开始整理生成的chunk 
 		this.preparedChunks.forEach(preparedChunk => {
 			const module = preparedChunk.module;
 			const chunk = this.addChunk(preparedChunk.name, module);
@@ -670,7 +694,10 @@ class Compilation extends Tapable {
 			if(this.applyPluginsBailResult("should-generate-chunk-assets") !== false) {
 				this.applyPlugins0("before-chunk-assets");
 
-				// seal 中比较中要的点 --  createChunkAssets 准备进行 chunk 输出到文件系统 -----------
+// step 11 ---  createChunkAssets --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
+				// seal 中比较重要的点 --  createChunkAssets 准备进行 chunk 输出到文件系统 -----------
+				// 点击查看 createChunkAssets
 				this.createChunkAssets();
 
 			}
@@ -1383,6 +1410,8 @@ class Compilation extends Tapable {
 		}
 	}
 
+// step 12 ---  createChunkAssets --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
 	// createChunkAssets --------------------
 	// 目前为止 所有的 chunk 都是 通过require的方法 引入的代码  需要根据 template 生成 _webpack_require() 的格式
 	// 使用 template 模板文件 生成的chunk
@@ -1408,11 +1437,12 @@ class Compilation extends Tapable {
 				} else {
 					if(chunk.hasRuntime()) {
 
-						// mainTemplate --  处理入口文件的 Module  --- 可以去看一下  mainTemplate 中的render方法
+						// 调用 mainTemplate 的 render方法 --  处理入口文件的 Module  --- 可以去看一下  mainTemplate 中的render方法
+						// 点击进入  mainTemplate
 						source = this.mainTemplate.render(this.hash, chunk, this.moduleTemplate, this.dependencyTemplates);
 					} else {
 
-						// chunkTemplate -- 处理异步加载的Module
+						// chunkTemplate -- 处理异步加载的Module -----------------
 						source = this.chunkTemplate.render(chunk, this.moduleTemplate, this.dependencyTemplates);
 					}
 					if(this.cache) {
@@ -1429,9 +1459,9 @@ class Compilation extends Tapable {
 				if(this.assets[file])
 					throw new Error(`Conflict: Multiple assets emit to the same filename ${file}`);
 
+// step 13 ---- 经过 template处理的source   --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
 
 				// 拿到 经过template 处理的chunk内容 保存到 compilation.assets 中 -----------------------
-
 				this.assets[file] = source;
 				chunk.files.push(file);
 				this.applyPlugins2("chunk-asset", chunk, file);

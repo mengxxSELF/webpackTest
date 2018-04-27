@@ -164,7 +164,10 @@ module.exports = class MainTemplate extends Template {
 		this.requireFn = "__webpack_require__";
 	}
 
-	// 生成模板的 render 方法
+// step 1 ---- 暴露给其他人的 render 方法  --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
+
+
+	// 生成模板的 render 方法 ---------------------------------------------
 	render(hash, chunk, moduleTemplate, dependencyTemplates) {
 		const buf = [];
 		buf.push(this.applyPluginsWaterfall("bootstrap", "", chunk, hash, moduleTemplate, dependencyTemplates));
@@ -184,7 +187,7 @@ module.exports = class MainTemplate extends Template {
 		}
 		if(!source) throw new Error("Compiler error: MainTemplate plugin 'render' should return something");
 		chunk.rendered = true;
-		// 将拼接好的文件资源返回 ---------------
+		// 将拼接好的文件资源返回 ------------------------------------------------------------
 		return new ConcatSource(source, ";");
 	}
 

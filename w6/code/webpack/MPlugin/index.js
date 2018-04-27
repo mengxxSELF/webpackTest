@@ -3,21 +3,20 @@ class StartWp {
         this.options = options
     }
     apply(compiler) {
-        console.log('run apply ---- ')
-        let {time} = this.options
+        let {name} = this.options
         // 监听事件 这是异步的 所以要执行cb  不然会卡到这里不动了
         compiler.plugin('run', function (compilation, cb) {
-            console.log('run', time)
+            console.log('run', name)
             // 每一次重新编译的时候又会触发
             // compilation.plugin('')
             cb();
         })
         compiler.plugin('before-run', function (compilation, cb) {
-            console.log('before-run', time)
+            console.log('before-run', name)
             cb();
         })
         compiler.plugin('done', function (compilation) {
-            console.log('done', time)
+            console.log('done', name)
         })
     }
 }

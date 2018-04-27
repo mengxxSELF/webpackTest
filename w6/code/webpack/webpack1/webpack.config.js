@@ -10,7 +10,7 @@ module.exports = {
     },
     plugins: [
         new StartWp({
-            time: new Date()
+            name: 'v3 - plugin '
         })
     ]
 }
