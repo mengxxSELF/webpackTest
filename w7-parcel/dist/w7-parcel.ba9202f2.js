@@ -78,25 +78,23 @@ parcelRequire = (function (modules, cache, entry) {
   // Override the current require with this new one
   return newRequire;
 })({3:[function(require,module,exports) {
-module.exports = {
-    fetchOnePost: function fetchOnePost() {
-        return new Promise(function (resolve, reject) {
-            fetch('http://jsonplaceholder.typicode.com/posts/1').then(function (res) {
-                return res.json();
-            }).then(function (data) {
-                resolve(data);
-            });
-        });
-    }
-};
-},{}],2:[function(require,module,exports) {
-var posts = require('./post');
+'use strict';
 
-posts.fetchOnePost().then(function (post) {
-    document.getElementById('title').innerHTML = post.title;
-    document.getElementById('body').innerHTML = post.body;
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
-},{"./post":3}],4:[function(require,module,exports) {
+exports.default = a = ' i am module a';
+},{}],2:[function(require,module,exports) {
+'use strict';
+
+var _a = require('./a.js');
+
+var _a2 = _interopRequireDefault(_a);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+console.log(_a2.default, 'a');
+},{"./a.js":3}],4:[function(require,module,exports) {
 
 var OVERLAY_ID = '__parcel__error__overlay__';
 
@@ -126,7 +124,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '54265' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '62464' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
