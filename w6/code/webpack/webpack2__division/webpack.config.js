@@ -33,6 +33,8 @@ module.exports = {
     ]
   },
   plugins: [
+    // vendoe 哈希值 并没有按照预想中不变
+    // new webpack.NamedChunksPlugin()
     // 抽取 index mian的公共文件
     new webpack.optimize.CommonsChunkPlugin({
       chunks: ['index', 'main' ],
