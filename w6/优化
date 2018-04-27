@@ -8,7 +8,9 @@
 
 处理方案：
 
-1 output 中的chunkhash
+1 output 中的 hash 使用 chunkhash
+
+hash 表示每一次打包  chunkhash 可以视为内容
 
 2 分离经常更新的代码和框架代码 【 namedModulesPulgin 】是再次打包的文件不变
 
