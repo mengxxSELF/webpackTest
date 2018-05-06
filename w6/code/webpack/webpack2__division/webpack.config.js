@@ -3,7 +3,7 @@ const path = require('path')
 
 module.exports = {
   entry: {
-    base: ['react'],
+    vender: ['react'],
     index: './index.js',
     main: './main.js'
   },
@@ -42,8 +42,8 @@ module.exports = {
     }),
     // 抽取 base 和 common 的公共 -- 由于common 和 base 公共的就是base  所有common会变小 base 不变
     new webpack.optimize.CommonsChunkPlugin({
-      chunks: ['common', 'base' ],
-      name: 'base'
+      chunks: ['common', 'vender' ],
+      name: 'vender'
     }),
     // 抽取公共的异步 module
     // new webpack.optimize.CommonsChunkPlugin({

@@ -228,6 +228,7 @@ class Compilation extends Tapable {
 
 // step 7 ---- addModuleDependencies 处理模块依赖  --------------------- webpack 流程分析 -----------------------------------------------------------------------------------------
 
+// 根据依赖数组(dependencies)创建依赖模块对象
 	addModuleDependencies(module, dependencies, bail, cacheGroup, recursive, callback) {
 		let _this = this;
 		const start = _this.profile && Date.now();

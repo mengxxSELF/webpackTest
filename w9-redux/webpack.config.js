@@ -11,6 +11,7 @@ module.exports = {
     },
     plugins: [
         // tree shaking -- js uglify new UglifyJSPlugin()
+        htmlplugin...
     ],
     resolve: {
         // 当 target 属性设置为 webworker, web 或者没有指定，默认值为 ["browser", "module", "main"]

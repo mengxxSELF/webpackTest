@@ -1,6 +1,7 @@
 const webpack = require('webpack')
 const path = require('path')
-const StartWp = require('../MPlugin/index.js')
+const StartWp = require('../MPlugin/index_copy.js')
+const StartWp2 = require('../MPlugin/index_copy2.js')
 
 module.exports = {
     entry: './index.js',
@@ -11,6 +12,7 @@ module.exports = {
     plugins: [
         new StartWp({
             name: 'v3 - plugin '
-        })
+        }),
+        new StartWp2()
     ]
 }

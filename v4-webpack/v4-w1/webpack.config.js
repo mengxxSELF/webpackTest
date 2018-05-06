@@ -13,27 +13,27 @@ module.exports = {
     filename: '[name].js',
     path: path.join(__dirname, 'dist')
   },
-  optimization:{
-      splitChunks:{
-        chunks: 'all',
-        name: 'common',
-        // cacheGroups:{
-        //   vendor:{ // 抽离第三插件
-        //     test: /node_modules/,
-        //     chunks: 'initial',
-        //     // chunks: "all",
-        //     name: 'vendor',
-        //     priority:10
-        //   },
-        //   commons:{
-        //     chunks: 'initial',
-        //     name: 'commons',
-        //     minSize: 0 // 只要超出0字节就生产新的包
-        //   }
-        // }
-      },
-      runtimeChunk: {
-        name: 'runtime',
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      name: 'common',
+      cacheGroups: {
+        vendor: { // 抽离第三插件
+          test: /node_modules/,
+          chunks: 'initial',
+          // chunks: "all",
+          name: 'vendor',
+          priority: 10
+        },
+        commons: {
+          chunks: 'initial',
+          name: 'commons',
+          minSize: 0 // 只要超出0字节就生产新的包
+        }
       }
+    },
+    runtimeChunk: {
+      name: 'runtime',
     }
+  }
 }

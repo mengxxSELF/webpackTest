@@ -3,8 +3,13 @@ const path = require('path')
 const oldMP = require('./MP_old.js')
 const newMP = require('./MP.js')
 
+// 
 module.exports = {
-    entry: './index.js',
+    // entry: ['a', 'c' ...]
+    entry: {
+        index: './index.js',
+        main: './main.js',
+    },
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist')
