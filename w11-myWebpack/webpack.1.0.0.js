@@ -22,7 +22,7 @@ let dealIntry = getIntry.replace(/(require)\(['"](.+?)['"]\)/g, ($1, $2, $3, $4)
 	return $2 = `__webpack_require__(${contAry.length})`
 })
 
-// console.log(contAry)
+console.log(contAry)
 
 let template = `(function(modules) {
  	function __webpack_require__(moduleId) {
@@ -38,7 +38,7 @@ let template = `(function(modules) {
   (function(module, exports, __webpack_require__) {
 	  <%- dealIntry %>
   }),
-	<% for(var i=0;i <= contAry.length; i++){ %>
+	<% for(var i=0;i < contAry.length; i++){ %>
 		(function(module, exports) {
 	    <%- contAry[i] %>
 	  }),
