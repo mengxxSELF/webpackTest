@@ -1,3 +1,2 @@
-import('./a.js').then(() => {
-    console.log('123')
-})
+require('./a.js')
+console.log('index.js')

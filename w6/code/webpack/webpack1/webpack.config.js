@@ -9,10 +9,10 @@ module.exports = {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist')
     },
-    plugins: [
-        new StartWp({
-            name: 'v3 - plugin '
-        }),
-        new StartWp2()
-    ]
+    // plugins: [
+    //     new StartWp({
+    //         name: 'v3 - plugin '
+    //     }),
+    //     new StartWp2()
+    // ]
 }
